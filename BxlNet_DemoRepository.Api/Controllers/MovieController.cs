@@ -36,5 +36,19 @@ namespace BxlNet_DemoRepository.Api.Controllers
             _repository.Insert(new Movie() { Title = dto.Title, Year = dto.Year, Realisator = dto.Realisator });
             return NoContent();
         }
+
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] UpdateMovieDto dto)
+        {
+            _repository.Update(new Movie() { Id = id, Title = dto.Title, Year = dto.Year, Realisator = dto.Realisator });
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            _repository.Delete(id);
+            return NoContent();
+        }
     }
 }

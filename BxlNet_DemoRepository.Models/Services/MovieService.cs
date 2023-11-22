@@ -40,12 +40,13 @@ namespace BxlNet_DemoRepository.Models.Services
 
         public void Update(Movie entity)
         {
-            throw new NotImplementedException();
+            _connection.Open();
+            _connection.ExecuteNonQuery("UPDATE Movie SET Title = @Title, [Year] = @Year, Realisator = @Realisator WHERE Id @Id;", parameters: entity);
         }
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            _connection.ExecuteNonQuery("DELETE FROM Movie WHERE Id = @Id;", parameters: new { id });
         }
     }
 }
