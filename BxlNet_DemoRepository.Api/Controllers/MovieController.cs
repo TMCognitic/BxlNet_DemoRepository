@@ -1,7 +1,10 @@
 using BxlNet_DemoRepository.Api.Models.Dtos;
+using BxlNet_DemoRepository.Models.Commands;
 using BxlNet_DemoRepository.Models.Entities;
+using BxlNet_DemoRepository.Models.Queries;
 using BxlNet_DemoRepository.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Tools.CQS;
 
 namespace BxlNet_DemoRepository.Api.Controllers
 {
@@ -21,33 +24,51 @@ namespace BxlNet_DemoRepository.Api.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_repository.GetAll());
+            IQueryResult<IEnumerable<Movie>> result = _repository.Execute(new GetAllMovieQuery());
+
+            if(result.IsFailure)
+               return BadRequest(result.ErrorMessage);
+
+            return Ok(result.Result);
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Ok(_repository.GetById(id));
+            IQueryResult<Movie> result = _repository.Execute(new GetMovieByIdQuery(id));
+
+            if (result.IsFailure)
+                return BadRequest(result.ErrorMessage);
+
+            return Ok(result.Result);
         }
 
         [HttpPost]
         public IActionResult Post([FromBody] CreateMovieDto dto) 
         {
-            _repository.Insert(new Movie() { Title = dto.Title, Year = dto.Year, Realisator = dto.Realisator });
+            ICommandResult result = _repository.Execute(new AddMovieCommand(dto.Title, dto.Year, dto.Realisator));
+            
+            if(result.IsFailure)
+                return BadRequest(result.ErrorMessage);
+
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] UpdateMovieDto dto)
-        {
-            _repository.Update(new Movie() { Id = id, Title = dto.Title, Year = dto.Year, Realisator = dto.Realisator });
-            return NoContent();
-        }
+        //[HttpPut("{id}")]
+        //public IActionResult Put(int id, [FromBody] UpdateMovieDto dto)
+        //{
+        //    _repository.Update(new Movie() { Id = id, Title = dto.Title, Year = dto.Year, Realisator = dto.Realisator });
+        //    return NoContent();
+        //}
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            _repository.Delete(id);
+            ICommandResult result = _repository.Execute(new DeleteMovieCommand(id));
+
+            if (result.IsFailure)
+                return BadRequest(result.ErrorMessage);
+
             return NoContent();
         }
     }

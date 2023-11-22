@@ -1,18 +1,16 @@
-﻿using BxlNet_DemoRepository.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BxlNet_DemoRepository.Models.Commands;
+using BxlNet_DemoRepository.Models.Entities;
+using BxlNet_DemoRepository.Models.Queries;
+using Tools.CQS.Commands;
+using Tools.CQS.Queries;
 
 namespace BxlNet_DemoRepository.Models.Repositories
 {
-    public interface IMovieRepository
+    public interface IMovieRepository : 
+        ICommandHandler<AddMovieCommand>,
+        ICommandHandler<DeleteMovieCommand>,
+        IQueryHandler<GetAllMovieQuery, IEnumerable<Movie>>,
+        IQueryHandler<GetMovieByIdQuery, Movie>
     {
-        IEnumerable<Movie> GetAll();
-        Movie? GetById(int id);
-        void Insert(Movie entity);
-        void Update(Movie entity);
-        void Delete(int id);
     }
 }
