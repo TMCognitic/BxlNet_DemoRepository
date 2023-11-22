@@ -1,3 +1,4 @@
+using BxlNet_DemoRepository.Api.Models.Dtos;
 using BxlNet_DemoRepository.Models.Entities;
 using BxlNet_DemoRepository.Models.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,19 @@ namespace BxlNet_DemoRepository.Api.Controllers
         public IActionResult Get()
         {
             return Ok(_repository.GetAll());
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            return Ok(_repository.GetById(id));
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] CreateMovieDto dto) 
+        {
+            _repository.Insert(new Movie() { Title = dto.Title, Year = dto.Year, Realisator = dto.Realisator });
+            return NoContent();
         }
     }
 }
